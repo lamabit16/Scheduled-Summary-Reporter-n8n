@@ -1,0 +1,407 @@
+{
+  "name": "lect2",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1TnTmpD8VhRtUSjX4L9Gw17etKfM1ugCdUsisqy-J2o4",
+          "mode": "list",
+          "cachedResultName": "lect2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TnTmpD8VhRtUSjX4L9Gw17etKfM1ugCdUsisqy-J2o4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TnTmpD8VhRtUSjX4L9Gw17etKfM1ugCdUsisqy-J2o4/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        16
+      ],
+      "id": "82e62da9-8850-4b43-9329-537a164f2bc5",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Y3hFIoQdqVoPisa9",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "Revenue"
+            },
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        432,
+        16
+      ],
+      "id": "7c128029-7773-4181-8867-200a505e2ff0",
+      "name": "Summarize"
+    },
+    {
+      "parameters": {
+        "sendTo": "lama.bit16@gmail.com",
+        "subject": "the revenue ",
+        "message": "=<!DOCTYPE html>\n<html lang=\"ar\" dir=\"rtl\">\n<head>\n    <meta charset=\"UTF-8\">\n    <style>\n        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n            background-color: #002200; /* خلفية خضراء شديدة الغمق */\n            color: #e0f2e0; /* نص أخضر باهت جداً للقراءة */\n            display: flex;\n            justify-content: center;\n            align-items: center;\n            height: 100vh;\n            margin: 0;\n        }\n        .report-card {\n            background: linear-gradient(145deg, #003300, #004400); /* تدرج أخضر غامق */\n            border: 2px solid #006400; /* أخضر قاني */\n            padding: 40px;\n            border-radius: 20px;\n            box-shadow: 0 15px 35px rgba(0,0,0,0.5);\n            width: 400px;\n            text-align: center;\n        }\n        h1 {\n            color: #00ff44; /* أخضر زاهي للعناوين */\n            font-size: 24px;\n            margin-bottom: 20px;\n            border-bottom: 1px solid #006400;\n            padding-bottom: 10px;\n        }\n        .info-box {\n            background-color: #002b00; /* أخضر غامق جداً للمحتوى */\n            border-radius: 12px;\n            padding: 20px;\n            margin-top: 20px;\n        }\n        .label {\n            color: #8fbc8f; /* أخضر فاتح للمسميات */\n            font-size: 14px;\n            display: block;\n            margin-bottom: 5px;\n        }\n        .value {\n            color: #ffffff; /* تم استخدام أفتح درجة أخضر مائلة للبياض للقيم */\n            font-size: 22px;\n            font-weight: bold;\n            display: block;\n        }\n        .currency {\n            color: #00ff44;\n            font-size: 16px;\n            margin-right: 5px;\n        }\n        .footer {\n            margin-top: 30px;\n            font-size: 12px;\n            color: #006400; /* أخضر قاني */\n        }\n    </style>\n</head>\n<body>\n\n    <div class=\"report-card\">\n        <h1>تقرير المبيعات اليومي</h1>\n        \n        <div class=\"info-box\">\n            <span class=\"label\">تاريخ التقرير</span>\n            <span class=\"value\">{{ $('Schedule Trigger').item.json['Readable date'] }}</span>\n        </div>\n\n        <div class=\"info-box\">\n            <span class=\"label\">إجمالي الإيرادات</span>\n            <span class=\"value\">\n                {{ $json.sum_Revenue }} \n                <span class=\"currency\">SAR</span>\n            </span>\n        </div>\n\n        <div class=\"footer\">\n            تم التحديث تلقائياً بواسطة نظام الإدارة\n        </div>\n    </div>\n\n</body>\n</html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        16
+      ],
+      "id": "ca70d28f-3101-4d1a-bdba-e4690426457f",
+      "name": "Send a message",
+      "webhookId": "f98f712e-ba13-4f57-b82c-38f961333d4c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dzBSPlgJYsvNdFQq",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "71224661-55ee-4d9a-9618-f228f6212d22",
+              "leftValue": "={{ $('Summarize').item.json.sum_Revenue }}",
+              "rightValue": 1050,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        816,
+        16
+      ],
+      "id": "b76603b5-353f-492e-98cf-9a2aa1195493",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 23,
+              "triggerAtMinute": 59
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        48,
+        16
+      ],
+      "id": "39b3689a-d6a0-4dfb-ae7f-2c87b9091bfd",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "sendTo": "lama.bit16@gmail.com",
+        "subject": "warning",
+        "message": "=<div style=\"direction: ltr; text-align: left; background-color: #001a00; padding: 40px; border-radius: 20px; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; border: 2px solid #006400; max-width: 600px; margin: auto;\">\n    \n    <div style=\"color: #2ecc71; font-size: 24px; font-weight: bold; margin-bottom: 25px; border-left: 5px solid #00ff44; padding-left: 15px;\">\n        Dear Manager,\n    </div>\n\n    <div style=\"background-color: #002b00; padding: 30px; border-radius: 15px; border: 1px solid #004d00; box-shadow: 0 10px 30px rgba(0,0,0,0.5);\">\n        \n        <p style=\"color: #8fbc8f; font-size: 14px; margin: 0; letter-spacing: 1px; text-transform: uppercase;\">\n            The total amount of sales for this:\n        </p>\n        \n        <p style=\"color: #ffffff; font-size: 20px; font-weight: 600; margin: 10px 0 25px 0;\">\n            {{ $('Schedule Trigger').item.json['Readable date'] }}\n        </p>\n\n        <div style=\"height: 1px; background-color: #004d00; margin-bottom: 25px;\"></div>\n\n        <p style=\"color: #006400; font-size: 16px; font-weight: bold; margin: 0; text-transform: uppercase;\">\n            The total is:\n        </p>\n        \n        <div style=\"margin-top: 10px;\">\n            <span style=\"color: #ffffff; font-size: 48px; font-weight: 900; line-height: 1;\">\n                {{ $json.sum_Revenue }}\n            </span>\n            <span style=\"color: #2ecc71; font-size: 20px; font-weight: bold; margin-left: 10px;\">\n                SAR\n            </span>\n        </div>\n\n    </div>\n\n    <div style=\"margin-top: 30px; text-align: right;\">\n        <p style=\"color: #004d00; font-size: 12px; font-weight: bold; letter-spacing: 2px; margin: 0;\">\n            DATA ANALYSIS REPORT • HASHEMITE BI SYSTEM\n        </p>\n    </div>\n</div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1088,
+        80
+      ],
+      "id": "1b0ff27e-1a4c-459c-93d3-5f2ec450cd89",
+      "name": "Send a message1",
+      "webhookId": "f98f712e-ba13-4f57-b82c-38f961333d4c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dzBSPlgJYsvNdFQq",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "lama.bit16@gmail.com",
+        "subject": "warning",
+        "message": "=<div style=\"direction: ltr; text-align: left; background-color: #001a00; padding: 40px; border-radius: 20px; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; border: 2px solid #006400; max-width: 600px; margin: auto;\">\n    \n    <div style=\"color: #2ecc71; font-size: 24px; font-weight: bold; margin-bottom: 25px; border-left: 5px solid #00ff44; padding-left: 15px;\">\n        Dear Manager,\n    </div>\n\n    <div style=\"background-color: #002b00; padding: 30px; border-radius: 15px; border: 1px solid #004d00; box-shadow: 0 10px 30px rgba(0,0,0,0.5);\">\n        \n        <p style=\"color: #8fbc8f; font-size: 14px; margin: 0; letter-spacing: 1px; text-transform: uppercase;\">\n            The total amount of sales for this:\n        </p>\n        \n        <p style=\"color: #ffffff; font-size: 20px; font-weight: 600; margin: 10px 0 25px 0;\">\n            {{ $('Schedule Trigger').item.json['Readable date'] }}\n        </p>\n\n        <div style=\"height: 1px; background-color: #004d00; margin-bottom: 25px;\"></div>\n\n        <p style=\"color: #006400; font-size: 16px; font-weight: bold; margin: 0; text-transform: uppercase;\">\n            The total is:\n        </p>\n        \n        <div style=\"margin-top: 10px;\">\n            <span style=\"color: #ffffff; font-size: 48px; font-weight: 900; line-height: 1;\">\n                {{ $json.sum_Revenue }}\n            </span>\n            <span style=\"color: #2ecc71; font-size: 20px; font-weight: bold; margin-left: 10px;\">\n                SAR\n            </span>\n        </div>\n\n    </div>\n\n    <div style=\"margin-top: 30px; text-align: right;\">\n        <p style=\"color: #004d00; font-size: 12px; font-weight: bold; letter-spacing: 2px; margin: 0;\">\n            DATA ANALYSIS REPORT • HASHEMITE BI SYSTEM\n        </p>\n    </div>\n</div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1088,
+        -80
+      ],
+      "id": "52e5c12e-02c3-4d8e-9563-b6aca2ca7095",
+      "name": "Send a message2",
+      "webhookId": "f98f712e-ba13-4f57-b82c-38f961333d4c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dzBSPlgJYsvNdFQq",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2026-03-17T02:41:22.263+03:00",
+          "Readable date": "March 17th 2026, 2:41:22 am",
+          "Readable time": "2:41:22 am",
+          "Day of week": "Tuesday",
+          "Year": "2026",
+          "Month": "March",
+          "Day of month": "17",
+          "Hour": "02",
+          "Minute": "41",
+          "Second": "22",
+          "Timezone": "Asia/Amman (UTC+03:00)"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Send a message": [
+      {
+        "json": {
+          "id": "19cfd89f9aa37726",
+          "threadId": "19cfd89f9aa37726",
+          "labelIds": [
+            "UNREAD",
+            "SENT",
+            "INBOX"
+          ]
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Get row(s) in sheet": [
+      {
+        "json": {
+          "row_number": 2,
+          "Date": "10/1/2026",
+          "Product": "Product A",
+          "Revenue": 150
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Date": "10/1/2026",
+          "Product": "Product B",
+          "Revenue": 200
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Date": "10/2/2026",
+          "Product": "Product A",
+          "Revenue": 175
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Date": "10/2/2026",
+          "Product": "Product C",
+          "Revenue": 50
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Date": "10/3/2026",
+          "Product": "Product B",
+          "Revenue": 250
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Date": "8/10/2026",
+          "Product": "Product A",
+          "Revenue": 180
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Date": "10/9/2026",
+          "Product": "Product C",
+          "Revenue": 75
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Summarize": [
+      {
+        "json": {
+          "sum_Revenue": 1080,
+          "count_": 0
+        },
+        "pairedItem": [
+          {
+            "item": 0
+          },
+          {
+            "item": 1
+          },
+          {
+            "item": 2
+          },
+          {
+            "item": 3
+          },
+          {
+            "item": 4
+          },
+          {
+            "item": 5
+          },
+          {
+            "item": 6
+          }
+        ]
+      }
+    ]
+  },
+  "connections": {
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "cc566575-dee4-4a91-a188-c5caee44d090",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1002adc397efc7630e681f2184769b8a6a6f3749d8d9dac5ab96b0946378d9c1"
+  },
+  "id": "uLtdzFQ4lAKUbsPl",
+  "tags": []
+}
